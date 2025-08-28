@@ -28,7 +28,6 @@ def init_db():
     )
     """)
 
-    # Site Table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS SiteInfo (
         SiteID INTEGER,
@@ -39,7 +38,6 @@ def init_db():
     )
     """)
 
-    # 🔹 Pre-populate Vendor table if empty
     cursor.execute("SELECT COUNT(*) FROM Vendor")
     count = cursor.fetchone()[0]
 
@@ -908,7 +906,6 @@ def init_db():
 
     conn.close()
 
-# Insert Site
 def insert_site(site_id, location, contact):
     conn = get_connection()
     cursor = conn.cursor()
@@ -917,7 +914,6 @@ def insert_site(site_id, location, contact):
     conn.commit()
     conn.close()
 
-# Insert Vendor/Equipment
 def insert_vendor(type_, site_id, operating_days, location, start_date, rental_type, availability="Available"):
     conn = get_connection()
     cursor = conn.cursor()
@@ -928,7 +924,6 @@ def insert_vendor(type_, site_id, operating_days, location, start_date, rental_t
     conn.commit()
     conn.close()
 
-# Fetch Vendors (with filters)
 def fetch_vendors(filter_by=None, site_id=None):
     conn = get_connection()
     cursor = conn.cursor()
