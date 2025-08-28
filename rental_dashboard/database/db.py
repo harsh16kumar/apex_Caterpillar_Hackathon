@@ -24,7 +24,7 @@ def init_db():
         Fuel REAL,
         Location TEXT,
         Availability TEXT CHECK(Availability IN ('Available', 'Rented')) DEFAULT 'Available',
-        RentalType TEXT
+        RentalType TEXT CHECK(RentalType IN ('Rigid', 'Flexible'))
     )
     """)
 
@@ -1012,3 +1012,48 @@ def get_available_equipment_ids(type_):
     conn.close()
     return ids
 
+# Update usage (engine + idle hours) for rented equipment
+def update_usage(equipment_id, engine_hours, idle_hours):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE Vendor
+        SET EngineHourDay = COALESCE(EngineHourDay, 0) + ?,
+            IdleHourDay   = COALESCE(IdleHourDay, 0) + ?
+        WHERE EquipmentID = ? AND Availability = 'Rented'
+    """, (engine_hours, idle_hours, equipment_id))
+    conn.commit()
+    conn.close()
+
+import time
+import random
+
+def simulate_realtime_updates():
+    rented_ids = fetch_vendors(filter_by="Rented")  # Get rented equipment
+    equipment_ids = [row[0] for row in rented_ids]  # First column is EquipmentID
+    
+    while True:
+        if equipment_ids:
+            # Pick a random rented equipment
+            eq_id = random.choice(equipment_ids)
+            
+            # Fake sensor data (hours used in last interval)
+            engine_hours = round(random.uniform(0.1, 1.0), 2)
+            idle_hours   = round(random.uniform(0.0, 0.5), 2)
+
+            update_usage(eq_id, engine_hours, idle_hours)
+            print(f"Updated {eq_id}: +{engine_hours} engine hr, +{idle_hours} idle hr")
+
+        time.sleep(2)  # wait 2 sec like real-time stream
+
+def update_fuel(equipment_id, fuel):
+    from database.db import get_connection
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE Vendor
+        SET Fuel = ?
+        WHERE EquipmentID = ? AND Availability = 'Rented'
+    """, (fuel, equipment_id))
+    conn.commit()
+    conn.close()
