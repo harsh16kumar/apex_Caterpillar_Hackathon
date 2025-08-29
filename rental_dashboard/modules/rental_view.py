@@ -160,8 +160,8 @@ def rental_view():
 
         df = pd.DataFrame(data, columns=[
             "EquipmentID", "Type", "SiteID", "CheckOutDate", "CheckInDate",
-            "EngineHourDay", "IdleHourDay", "OperatingDays", "DaysLeft",
-            "Fuel", "Location", "Availability", "RentalType"
+            "EngineHourDay", "IdleHourDay", "OperatingDays", "DaysLeft", "Fuel",
+            "Location", "Availability", "RentalType", "ReadyToShare", "SharedBySiteID"
         ])
 
         # --- if the Location Distance View is on, show a separate sorted table for RENTED only ---
