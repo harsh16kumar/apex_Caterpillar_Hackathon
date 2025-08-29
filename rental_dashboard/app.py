@@ -22,6 +22,7 @@ from database.db import init_db, ensure_vendor_share_columns
 from modules.rental_form import rental_form
 from modules.rental_view import rental_view
 from modules.client_dashboard import client_dashboard
+from modules.analysis import demand_forecast_view
 from modules.location_view import location_view  # if you use it inside vendor views
 import pandas as pd
 from modules.vendor_share import vendor_share
@@ -48,7 +49,7 @@ profile = st.session_state.profile
 
 if profile == "Vendor":
     st.sidebar.title("Rental Dashboard (Vendor)")
-    option = st.sidebar.radio("Choose Action", ["View", "Add","Share"], index=0)
+    option = st.sidebar.radio("Choose Action", ["View", "Add","Share", "Analysis"], index=0)
 
     if option == "View":
         rental_view()
@@ -56,6 +57,8 @@ if profile == "Vendor":
         rental_form()
     elif option == "Share":
         vendor_share()  # <-- NEW
+    elif option == "Analysis":
+        demand_forecast_view()
 
 elif profile == "Client 1":
     client_dashboard(site_id=1, title="Client 1 Dashboard")
