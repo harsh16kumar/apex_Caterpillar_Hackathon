@@ -103,7 +103,7 @@ def simulate_usage_updates():
         return
 
     eq_id = random.choice(rented_ids)
-    engine_hours = round(random.uniform(0.1, 1.0), 2)
+    engine_hours = round(random.uniform(1.0, 3.0), 2)
     idle_hours = round(random.uniform(0.0, 0.5), 2)
 
     update_usage(eq_id, engine_hours, idle_hours)

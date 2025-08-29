@@ -26,10 +26,13 @@ from modules.analysis import demand_forecast_view
 from modules.location_view import location_view  # if you use it inside vendor views
 import pandas as pd
 from modules.vendor_share import vendor_share
+from modules.map_view import equipment_map_view
+from database.geo import ensure_geo_columns
 
 # --- App setup ---
 st.set_page_config(page_title="Rental Dashboard", layout="wide")
 init_db()
+ensure_geo_columns()
 ensure_vendor_share_columns()
 
 # --- Top bar: profile selector (top-left) ---
@@ -49,7 +52,7 @@ profile = st.session_state.profile
 
 if profile == "Vendor":
     st.sidebar.title("Rental Dashboard (Vendor)")
-    option = st.sidebar.radio("Choose Action", ["View", "Add","Share", "Analysis"], index=0)
+    option = st.sidebar.radio("Choose Action", ["View", "Add","Share", "Analysis","Map"], index=0)
 
     if option == "View":
         rental_view()
@@ -59,6 +62,8 @@ if profile == "Vendor":
         vendor_share()  # <-- NEW
     elif option == "Analysis":
         demand_forecast_view()
+    elif option == "Map":
+        equipment_map_view()
 
 elif profile == "Client 1":
     client_dashboard(site_id=1, title="Client 1 Dashboard")

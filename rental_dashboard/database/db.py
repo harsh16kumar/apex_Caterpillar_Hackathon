@@ -986,14 +986,6 @@ def approve_request(request_id: int, requester_site_id: int, equipment_id: str):
                     (requester_site_id, equipment_id))
         conn.commit()
 
-# def update_request_status(request_id: int, status: str):
-#     with get_connection() as conn:
-#         conn.execute(
-#             "UPDATE RentalRequests SET Status = ? WHERE RequestID = ?",
-#             (status, request_id)
-#         )
-#         conn.commit()
-
 def update_request_status(request_id: int, status: str, requester_site_id: int):
     with get_connection() as conn:
         cur = conn.cursor()
@@ -1138,9 +1130,10 @@ def update_usage(equipment_id, engine_hours, idle_hours):
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE Vendor
-        SET EngineHourDay = COALESCE(EngineHourDay, 0) + ?,
-            IdleHourDay   = COALESCE(IdleHourDay, 0) + ?
-        WHERE EquipmentID = ? AND Availability = 'Rented'
+            SET 
+                EngineHourDay = (COALESCE(EngineHourDay, 0) + ?) % 24,
+                IdleHourDay   = (COALESCE(IdleHourDay, 0) + ?) % 24
+            WHERE EquipmentID = ? AND Availability = 'Rented';
     """, (engine_hours, idle_hours, equipment_id))
     conn.commit()
     conn.close()
